@@ -1,0 +1,133 @@
+package win
+
+import (
+	"golang.org/x/sys/windows"
+	"syscall"
+	"unsafe"
+)
+
+type (
+	ATOM          uint16
+	HANDLE        uintptr
+	HGLOBAL       HANDLE
+	HINSTANCE     HANDLE
+	LCID          uint32
+	LCTYPE        uint32
+	LANGID        uint16
+	HMODULE       uintptr
+	HWINEVENTHOOK HANDLE
+	HRSRC         uintptr
+)
+
+type (
+	HACCEL    HANDLE
+	HCURSOR   HANDLE
+	HDWP      HANDLE
+	HICON     HANDLE
+	HMENU     HANDLE
+	HMONITOR  HANDLE
+	HRAWINPUT HANDLE
+	HWND      HANDLE
+)
+
+type BITMAPINFOHEADER struct {
+	BiSize          uint32
+	BiWidth         int32
+	BiHeight        int32
+	BiPlanes        uint16
+	BiBitCount      uint16
+	BiCompression   uint32
+	BiSizeImage     uint32
+	BiXPelsPerMeter int32
+	BiYPelsPerMeter int32
+	BiClrUsed       uint32
+	BiClrImportant  uint32
+}
+
+type RGBQUAD struct {
+	RgbBlue     byte
+	RgbGreen    byte
+	RgbRed      byte
+	RgbReserved byte
+}
+
+type BITMAPINFO struct {
+	BmiHeader BITMAPINFOHEADER
+	BmiColors *RGBQUAD
+}
+
+type (
+	COLORREF     uint32
+	HBITMAP      HGDIOBJ
+	HBRUSH       HGDIOBJ
+	HDC          HANDLE
+	HFONT        HGDIOBJ
+	HGDIOBJ      HANDLE
+	HENHMETAFILE HANDLE
+	HPALETTE     HGDIOBJ
+	HPEN         HGDIOBJ
+	HRGN         HGDIOBJ
+	CLIPFORMAT   uint16
+)
+
+var (
+	// Library
+	libkernel32 *windows.LazyDLL
+
+	// Functions
+	getModuleHandle *windows.LazyProc
+)
+
+func init() {
+	// Library
+	libkernel32 = windows.NewLazySystemDLL("kernel32.dll")
+
+	// Functions
+	//activateActCtx = libkernel32.NewProc("ActivateActCtx")
+	//closeHandle = libkernel32.NewProc("CloseHandle")
+	//createActCtx = libkernel32.NewProc("CreateActCtxW")
+	//fileTimeToSystemTime = libkernel32.NewProc("FileTimeToSystemTime")
+	//findResource = libkernel32.NewProc("FindResourceW")
+	//getConsoleTitle = libkernel32.NewProc("GetConsoleTitleW")
+	//getConsoleWindow = libkernel32.NewProc("GetConsoleWindow")
+	//getCurrentThreadId = libkernel32.NewProc("GetCurrentThreadId")
+	//getLastError = libkernel32.NewProc("GetLastError")
+	//getLocaleInfo = libkernel32.NewProc("GetLocaleInfoW")
+	//getLogicalDriveStrings = libkernel32.NewProc("GetLogicalDriveStringsW")
+	getModuleHandle = libkernel32.NewProc("GetModuleHandleW")
+	//getNumberFormat = libkernel32.NewProc("GetNumberFormatW")
+	//getPhysicallyInstalledSystemMemory = libkernel32.NewProc("GetPhysicallyInstalledSystemMemory")
+	//getProfileString = libkernel32.NewProc("GetProfileStringW")
+	//getThreadLocale = libkernel32.NewProc("GetThreadLocale")
+	//getThreadUILanguage = libkernel32.NewProc("GetThreadUILanguage")
+	//getVersion = libkernel32.NewProc("GetVersion")
+	//globalAlloc = libkernel32.NewProc("GlobalAlloc")
+	//globalFree = libkernel32.NewProc("GlobalFree")
+	//globalLock = libkernel32.NewProc("GlobalLock")
+	//globalUnlock = libkernel32.NewProc("GlobalUnlock")
+	//moveMemory = libkernel32.NewProc("RtlMoveMemory")
+	//mulDiv = libkernel32.NewProc("MulDiv")
+	//loadResource = libkernel32.NewProc("LoadResource")
+	//lockResource = libkernel32.NewProc("LockResource")
+	//setLastError = libkernel32.NewProc("SetLastError")
+	//sizeofResource = libkernel32.NewProc("SizeofResource")
+	//systemTimeToFileTime = libkernel32.NewProc("SystemTimeToFileTime")
+}
+
+func GetModuleHandle(lpModuleName *uint16) HINSTANCE {
+	ret, _, _ := syscall.Syscall(getModuleHandle.Addr(), 1,
+		uintptr(unsafe.Pointer(lpModuleName)),
+		0,
+		0)
+
+	return HINSTANCE(ret)
+}
+
+func LoadIcon(hInstance HINSTANCE, lpIconName *uint16) HICON {
+	ret, _, _ := syscall.Syscall(loadIcon.Addr(), 2,
+		uintptr(hInstance),
+		uintptr(unsafe.Pointer(lpIconName)),
+		0)
+
+	return HICON(ret)
+}
